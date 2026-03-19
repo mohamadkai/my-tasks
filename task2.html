@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>calc</title>
+  <style>
+    * { box-sizing: border-box; }
+    body{
+      margin:0;
+      min-height:100vh;
+      display:grid;
+      place-items:center;
+      background:#f5f7fb;
+      font-family: Arial, sans-serif;
+      padding:20px;
+      color:#111827;
+    }
+    .app{
+      width:min(820px,100%);
+      background:#fff;
+      border-radius:18px;
+      box-shadow:0 16px 40px rgba(0,0,0,.08);
+      padding:18px;
+    }
+    h1{ margin:0 0 10px; font-size:1.2rem; }
+    .row{
+      display:grid;
+      grid-template-columns: 1fr 140px 1fr;
+      gap:10px;
+      align-items:end;
+    }
+    label{ display:block; font-weight:700; margin:0 0 6px; }
+    input, select, button{
+      width:100%;
+      padding:12px 14px;
+      border-radius:12px;
+      border:1px solid #d1d5db;
+      font-size:1rem;
+      background:#fff;
+    }
+    input:focus, select:focus{ outline:2px solid #93c5fd; border-color:#60a5fa; }
+    .actions{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+      margin-top:12px;
+    }
+    button{ border:none; cursor:pointer; font-weight:800; }
+    .primary{ background:#2563eb; color:#fff; }
+    .secondary{ background:#e5e7eb; color:#111827; }
+
+    .panel{
+      margin-top:14px;
+      border:1px dashed #cbd5e1;
+      background:#f8fafc;
+      border-radius:12px;
+      padding:12px;
+      display:grid;
+      gap:6px;
+    }
+    .result{
+      font-size:1.1rem;
+      font-weight:900;
+      direction:ltr;
+      text-align:left;
+    }
+    .msg{ color:#6b7280; line-height:1.5; }
+    .debug{
+      margin-top:10px;
+      padding-top:10px;
+      border-top:1px solid #e5e7eb;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      direction:ltr;
+      text-align:left;
+      color:#334155;
+      font-size:.92rem;
+      display:grid;
+      gap:4px;
+    }
+    .history{
+      margin-top:16px;
+      border-top:1px solid #e5e7eb;
+      padding-top:12px;
+    }
+    .history h2{ margin:0 0 10px; font-size:1rem; }
+    ul{ margin:0; padding:0; list-style:none; display:grid; gap:8px; }
+    li{
+      padding:10px 12px;
+      border:1px solid #e5e7eb;
+      border-radius:12px;
+      background:#f9fafb;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      direction:ltr;
+      text-align:left;
+    }
+
+    @media (max-width: 640px){
+      .row{ grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="app">
+    <div class="row">
+      <div>
+        <label for="a">الرقم الأول</label>
+        <!-- لاحظ: حتى لو input type=number، value بترجع String -->
+        <input id="a" type="number" step="any" />
+      </div>
+
+      <div>
+        <label for="op">العملية</label>
+        <select id="op">
+          <option value="+">+ جمع</option>
+          <option value="-">- طرح</option>
+          <option value="*">× ضرب</option>
+          <option value="/">÷ قسمة</option>
+          <option value="%">% باقي القسمة</option>
+          <option value="**">** أس</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="b">الرقم الثاني</label>
+        <input id="b" type="number" step="any" />
+      </div>
+    </div>
+
+    <div class="actions">
+      <button id="calc" class="primary">احسب</button>
+      <button id="clear" class="secondary">مسح</button>
+    </div>
+
+    <section class="panel" aria-live="polite">
+      <div class="msg" id="msg">اكتب رقمين واختَر العملية ثم اضغط «احسب»</div>
+      <div class="result" id="result">—</div>
+    </section>
+  </main>
+
+  <script>
+  // Get elements
+  const aInput = document.getElementById("a");
+  const bInput = document.getElementById("b");
+  const opSelect = document.getElementById("op");
+  const calcBtn = document.getElementById("calc");
+  const clearBtn = document.getElementById("clear");
+  const msg = document.getElementById("msg");
+  const result = document.getElementById("result");
+
+  // التعامل مع زرار الحساب
+  calcBtn.addEventListener("click", function () {
+    const firstNumber = parseFloat(aInput.value);
+    const secondNumber = parseFloat(bInput.value);
+    const operation = opSelect.value;
+
+    // التأكد من صحة القيم أو المدخلات
+    if (Number.isNaN(firstNumber) || Number.isNaN(secondNumber)) {
+      msg.textContent = "Please enter valid numbers.";
+      result.textContent = "—";
+      return;
+    }
+
+    // تنفيذ المطلوب
+    let finalResult;
+
+    switch (operation) {
+      case "+":
+        finalResult = firstNumber + secondNumber;
+        break;
+
+      case "-":
+        finalResult = firstNumber - secondNumber;
+        break;
+
+      case "*":
+        finalResult = firstNumber * secondNumber;
+        break;
+
+      case "/":
+        if (secondNumber === 0) {
+          msg.textContent = "Cannot divide by zero.";
+          result.textContent = "—";
+          return;
+        }
+        finalResult = firstNumber / secondNumber;
+        break;
+
+      case "%":
+        if (secondNumber === 0) {
+          msg.textContent = "Cannot divide by zero.";
+          result.textContent = "—";
+          return;
+        }
+        finalResult = firstNumber % secondNumber;
+        break;
+
+      case "**":
+        finalResult = firstNumber ** secondNumber;
+        break;
+    }
+
+    // تجهيز النتيجة وعرضها
+    finalResult = Math.round(finalResult * 100) / 100;
+    msg.textContent = "Calculation completed successfully.";
+    result.textContent = finalResult;
+  });
+
+  // التعامل مع زرار المسح
+  clearBtn.addEventListener("click", function () {
+    aInput.value = "";
+    bInput.value = "";
+    opSelect.value = "+";
+    msg.textContent = "اكتب رقمين واختَر العملية ثم اضغط «احسب»";
+    result.textContent = "—";
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Product Display System</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      width: min(1100px, 100%);
+      margin: auto;
+      background: #111827;
+      border: 1px solid #334155;
+      border-radius: 18px;
+      padding: 24px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
+      color: #ffffff;
+    }
+
+    .description {
+      text-align: center;
+      color: #cbd5e1;
+      margin-bottom: 24px;
+      line-height: 1.8;
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .filter-box {
+      background: #0b1220;
+      border: 1px solid #334155;
+      border-radius: 14px;
+      padding: 14px;
+    }
+
+    .filter-box label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: #f8fafc;
+    }
+
+    .filter-box input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #475569;
+      border-radius: 10px;
+      background: #020617;
+      color: #fff;
+      font-size: 15px;
+      outline: none;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 10px;
+      align-items: end;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: none;
+      padding: 12px 18px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    #applyBtn {
+      background: #22c55e;
+      color: #052e16;
+    }
+
+    #resetBtn {
+      background: #f59e0b;
+      color: #422006;
+    }
+
+    button:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+    }
+
+    .results-info {
+      margin-bottom: 20px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: #0b1220;
+      border: 1px solid #23314a;
+      color: #cbd5e1;
+    }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 16px;
+    }
+
+    .product-card {
+      background: #0b1220;
+      border: 1px solid #334155;
+      border-radius: 16px;
+      padding: 18px;
+      transition: 0.3s;
+    }
+
+    .product-card:hover {
+      transform: translateY(-4px);
+      border-color: #22c55e;
+    }
+
+    .product-index {
+      font-size: 13px;
+      color: #94a3b8;
+      margin-bottom: 10px;
+      display: inline-block;
+    }
+
+    .product-name {
+      font-size: 22px;
+      color: #ffffff;
+      margin-bottom: 10px;
+    }
+
+    .product-price {
+      font-size: 18px;
+      font-weight: bold;
+      color: #22c55e;
+      margin-bottom: 10px;
+    }
+
+    .empty-message {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 24px;
+      border: 1px dashed #475569;
+      border-radius: 16px;
+      color: #fca5a5;
+      background: #0b1220;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>نظام عرض المنتجات</h1>
+
+    <div class="filters">
+      <div class="filter-box">
+        <label for="priceFilter">اعرض اقصى سعر</label>
+        <input type="number" id="priceFilter" placeholder="مثال: 1000" />
+      </div>
+
+      <div class="buttons">
+        <button id="applyBtn" type="button">تطبيق الفلترة</button>
+        <button id="resetBtn" type="button">إعادة ضبط</button>
+      </div>
+    </div>
+
+    <div id="resultsInfo" class="results-info"></div>
+
+    <div id="productsContainer" class="products-grid"></div>
+  </div>
+
+  <script>
+    // مصفوفة المنتجات الأساسية
+    const products = [
+      { name: "Apple Watch", price: 950 },
+      { name: "AirPods", price: 1200 },
+      { name: "Keyboard", price: 450 },
+      { name: "Mouse", price: 300 },
+      { name: "Monitor", price: 2200 },
+      { name: "Pen", price: 40 },
+      { name: "Phone", price: 5000 },
+      { name: "Printer", price: 1800 },
+      { name: "Power Bank", price: 700 },
+      { name: "Adapter", price: 150 }
+    ];
+
+    // جلب عناصر الصفحة
+    const productsContainer = document.getElementById("productsContainer");
+    const resultsInfo = document.getElementById("resultsInfo");
+    const priceFilterInput = document.getElementById("priceFilter");
+    const applyBtn = document.getElementById("applyBtn");
+    const resetBtn = document.getElementById("resetBtn");
+
+    // دالة عرض المنتجات على الصفحة
+    function renderProducts(productList) {
+      // تفريغ مكان عرض المنتجات قبل إضافة المحتوى الجديد
+      productsContainer.innerHTML = "";
+
+      // تحديث عدد المنتجات الظاهرة حاليًا
+      resultsInfo.innerHTML = `عدد المنتجات الظاهرة الآن: <strong>${productList.length}</strong>`;
+
+      // لو مفيش نتائج بعد الفلترة، نظهر رسالة بدل الكروت
+      if (productList.length === 0) {
+        productsContainer.innerHTML = `
+          <div class="empty-message">
+            لا توجد منتجات مطابقة للفلاتر الحالية
+          </div>
+        `;
+        return;
+      }
+
+      // نلف على كل المنتجات وننشئ كارت لكل منتج
+      for (let i = 0; i < productList.length; i++) {
+        // تخزين المنتج الحالي في متغير لتسهيل القراءة
+        const product = productList[i];
+
+        // إنشاء عنصر div جديد ليكون كارت المنتج
+        const card = document.createElement("div");
+
+        // إضافة class للكارت حتى يأخذ التنسيق من CSS
+        card.className = "product-card";
+
+        // وضع المحتوى الداخلي للكارت
+        card.innerHTML = `
+          <span class="product-index">المنتج رقم ${i + 1}</span>
+          <h3 class="product-name">${product.name}</h3>
+          <p class="product-price">${product.price} جنيه</p>
+        `;
+
+        // إضافة الكارت داخل مكان عرض المنتجات
+        productsContainer.appendChild(card);
+      }
+    }
+
+// دالة تطبيق الفلترة
+    function applyFilters() {
+      // قراءة قيمة السعر من الـ input
+      const maxPrice = priceFilterInput.value;
+
+      // إنشاء مصفوفة جديدة لتجميع النتائج المطابقة
+      const filteredProducts = [];
+
+      // نمر على كل منتج في المصفوفة الأصلية
+      for (let i = 0; i < products.length; i++) {
+        // المنتج الحالي
+        const currentProduct = products[i];
+
+        // نفترض أن المنتج مطابق من البداية
+        let matchesPrice = true;
+
+        // لو المستخدم كتب سعر، نطبق شرط السعر
+        if (maxPrice !== "") {
+          matchesPrice = currentProduct.price < Number(maxPrice);
+        }
+
+        // لو المنتج حقق شرط السعر، نضيفه إلى النتائج
+        if (matchesPrice) {
+          filteredProducts.push(currentProduct);
+        }
+      }
+
+      // عرض النتائج النهائية بعد الفلترة
+      renderProducts(filteredProducts);
+    }
+
+    // عند الضغط على زر تطبيق الفلترة
+    applyBtn.addEventListener("click", applyFilters);
+
+    // عند الضغط على زر إعادة الضبط
+    resetBtn.addEventListener("click", function () {
+      // مسح قيمة input السعر
+      priceFilterInput.value = "";
+
+      // إعادة عرض كل المنتجات
+      renderProducts(products);
+    });
+
+    // تشغيل الفلترة عند الضغط على Enter داخل input السعر
+    priceFilterInput.addEventListener("keydown", function (event) {
+      if (event.key === "Enter") {
+        applyFilters();
+      }
+    });
+
+    // عند تحميل الصفحة لأول مرة، نعرض كل المنتجات
+    renderProducts(products);
+  </script>
+</body>
+</html>

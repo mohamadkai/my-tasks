@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>my first task</title>
+<!-- google fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --blue:#3473e7;
+      --blue-2:#3473e7;
+      --border:#e9e9ef;
+      --bg:#f6f6fb;
+      --text:#1f1f2b;
+      --muted:#7a7a90;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: "Cairo", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+    }
+
+    .card{
+      width:min(980px, 100%);
+      background:#fff;
+      border-radius:24px;
+      box-shadow: 0 18px 45px rgba(17, 10, 35, .08);
+      padding: 44px 48px 36px;
+    }
+
+    h1{
+      margin: 0 0 28px;
+      text-align:center;
+      color: var(#3473e7);
+      font-size: clamp(28px, 3.2vw, 44px);
+      font-weight: 800;
+    }
+
+    form{
+      display:flex;
+      flex-direction:column;
+      gap: 22px;
+    }
+
+    .field{ position:relative; }
+
+    input{
+      width:100%;
+      height: 66px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background:#fff;
+      padding: 0 22px;
+      font-size: 18px;
+      outline:none;
+      text-align:right;
+      direction:rtl;
+      transition: border-color .15s ease, box-shadow .15s ease;
+    }
+
+    input::placeholder{
+      color: var(--muted);
+      opacity: 1;
+      font-weight: 600;
+    }
+
+    input:focus{
+      border: 2px solid var(--blue);
+      box-shadow: 0 0 0 4px rgba(43, 0, 87, .08);
+    }
+
+    button{
+      height: 70px;
+      border: none;
+      border-radius: 14px;
+      background: var(--blue-2);
+      color:#fff;
+      font-size: 20px;
+      font-weight: 800;
+      cursor:pointer;
+      transition: transform .08s ease, filter .15s ease;
+    }
+    button:hover{ filter: brightness(1.05); }
+    button:active{ transform: translateY(1px); }
+
+    /* صندوق الرسالة اللي هتظهر تحت */
+    .result{
+      margin-top: 18px;
+      padding: 16px 18px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: #fafafe;
+      font-size: 18px;
+      line-height: 1.8;
+      display:none; /* مخفي لحد ما نطبع */
+    }
+
+    .result strong{ color: var(--blue); }
+
+    @media (max-width: 520px){
+      .card{ padding: 34px 18px 24px; }
+      input{ height: 60px; font-size: 16px; }
+      button{ height: 62px; font-size: 18px; }
+      .result{ font-size: 16px; }
+    }
+  </style>
+</head>
+<!-- بداية البادي -->
+<body>
+  <div class="card">
+    <!-- العنوان -->
+    <h1>أدخل بياناتك</h1>
+<!-- بداية الفورم -->
+    <form id="infoForm">
+      <!-- خانة الاسم -->
+      <div class="field">
+        <input id="name" type="text" name="name" placeholder="اسمك" aria-label="اسمك" />
+      </div>
+<!-- خانة السن -->
+      <div class="field">
+        <input id="age" type="number" name="age" placeholder="سنك" aria-label="سنك" min="0" />
+      </div>
+<!-- خانة الهواية -->
+      <div class="field">
+        <input id="hobby" type="text" name="hobby" placeholder="هوايتك" aria-label="هوايتك" />
+      </div>
+<!-- الزرار -->
+      <button type="submit">اعرض الرسالة</button>
+
+      <!-- هنا الرسالة هتظهر -->
+      <div id="result" class="result"></div>
+    </form>
+    <!-- نهاية الفورم -->
+  </div>
+  <script>
+  // امسك العناصر
+  const form = document.getElementById("infoForm");
+  const nameInput = document.getElementById("name");
+  const ageInput = document.getElementById("age");
+  const hobbyInput = document.getElementById("hobby");
+  const resultBox = document.getElementById("result");
+
+  // الاكشن لما اليوزر يضغط على الزرار
+  form.addEventListener("submit", function(e) {
+    e.preventDefault(); // منع الريفرش
+
+    const name = nameInput.value.trim();
+    const age = ageInput.value.trim();
+    const hobby = hobbyInput.value.trim();
+
+    const message = `اهلا يا ${name} انت سنك ${age} وهوايتك ${hobby} قوم ذاكر وبطل مرقعة😂`;
+
+    resultBox.style.display = "block"; // اظهار صندوق النتيجة
+    resultBox.textContent = message;   // طباعة الرسالة
+  });
+</script>
+</script>
+</body>
+</html>

@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mentorship | Javascript</title>
+    <link rel="icon" type="image/x-icon" href="logo.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap');
+
+        /*   make scroll look in the sidebar modern  */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background-color: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: #470d99;
+            border-radius: 5px; 
+
+        }
+
+        
+        :root {
+            --primary-color: #470d99;
+            --secondary-color: #1b0338;
+            --accent-color: #24056b;
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --card-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            
+            /* Light Mode */
+            --bg-light: #f9f9f9;
+            --text-light: #ffffff;
+            --text-dark: #333333;
+            
+            /* Dark Mode */
+            --bg-dark: #121212;
+            --card-dark: #1e1e1e;
+            --text-dark-mode: #e1e1e1;
+        }
+
+        * {
+            font-family: 'Tajawal', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        body {
+            direction: rtl;
+            background-color: var(--bg-light);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        body.dark-mode {
+            background-color: var(--bg-dark);
+            color: var(--text-dark-mode);
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .menu-btn, .theme-toggle {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+
+        .menu-btn:hover, .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            background-size: 400% 400%;
+            padding: 6rem 2rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: var(--text-light);
+            position: relative;
+            overflow: hidden;
+            animation: gradientAnimation 15s ease infinite;
+        }
+
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .hero::before, .hero::after {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 20s linear infinite;
+        }
+
+        .hero::before {
+            top: -150px;
+            right: -150px;
+        }
+
+        .hero::after {
+            bottom: -150px;
+            left: -150px;
+            animation-delay: -10s;
+        }
+
+        @keyframes float {
+            0% { transform: rotate(0deg) translate(0, 0) scale(1); }
+            33% { transform: rotate(120deg) translate(50px, 50px) scale(1.2); }
+            66% { transform: rotate(240deg) translate(-50px, 50px) scale(0.8); }
+            100% { transform: rotate(360deg) translate(0, 0) scale(1); }
+        }
+
+        .whatsapp-button {
+            display: inline-block;
+            background-color: #25D366;
+            color: #fff;
+            padding: 15px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 900;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .whatsapp-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+
+        .whatsapp-button:hover {
+            background-color: #0d923e;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+        }
+
+        .whatsapp-button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        /* Featured Tasks Section */
+        .featured-tasks {
+            padding: 2rem;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            margin-top: 3rem;
+        }
+
+        .featured-tasks h3 {
+            color: var(--text-light);
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .featured-tasks h3::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background: var(--text-light);
+            border-radius: 3px;
+        }
+
+        .task-carousel-container {
+            position: relative;
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        .featured-boxes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .task-card {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .task-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+            z-index: -1;
+            transition: all 0.4s ease;
+        }
+
+        .task-card:hover {
+            transform: translateY(-10px) scale(1.03);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+        
+        .task-card:hover::before {
+            opacity: 0.8;
+        }
+
+        .task-card i {
+            font-size: 2.5rem;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+
+        .task-card h4 {
+            color: var(--text-light);
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .task-card p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.4;
+            flex-grow: 1;
+        }
+
+        .task-link {
+            display: inline-block;
+            padding: 0.7rem 1.8rem;
+            background: rgba(255, 255, 255, 0.2);
+            color: var(--text-light);
+            text-decoration: none;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .task-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(255,255,255,0.1), rgba(255,255,255,0.3));
+            transition: all 0.4s ease;
+            z-index: -1;
+        }
+
+        .task-link:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .task-link:hover::before {
+            width: 100%;
+        }
+
+        @media (max-width: 900px) {
+            .featured-boxes {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .featured-boxes {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @keyframes heroPattern {
+            0% { background-position: 0 0; }
+            100% { background-position: 100px 100px; }
+        }
+
+        .hero-content {
+            max-width: 800px;
+            position: relative;
+            z-index: 1;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 1s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero h2 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            font-weight: 900;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        /* Navigation Sidebar */
+        nav {
+            position: fixed;
+            top: 0;
+            right: 0;
+            height: 100%;
+            background-color: var(--secondary-color);
+            width: 280px;
+            padding-top: 80px;
+            transform: translateX(100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 999;
+            overflow-y: auto;
+            box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        nav.visible {
+            transform: translateX(0);
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 1rem;
+        }
+
+        nav ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        nav ul li a {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            color: var(--text-light);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        nav ul li a:hover {
+            background-color: var(--accent-color);
+            transform: translateX(-5px);
+        }
+
+        nav ul li a.active {
+            background-color: var(--accent-color);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        i {
+            margin-left: 0.5rem;
+        }
+
+        /* Main Content Area */
+        main {
+            flex: 1;
+            margin-top: 60px;
+            transition: margin-right 0.3s ease;
+        }
+
+        #landing {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+            text-align: center;
+            color: var(--text-dark);
+        }
+
+        body.dark-mode #landing {
+            color: var(--text-dark-mode);
+        }
+
+        #task-content {
+            width: 100%;
+            min-height: calc(100vh - 60px);
+            display: none;
+            padding: 0;
+            margin: 0;
+            overflow-y: auto;
+        }
+
+        #task-content.show {
+            display: block;
+        }
+
+        /* Dark Mode Styles */
+        body.dark-mode header {
+            background-color: var(--card-dark);
+        }
+
+        body.dark-mode nav {
+            background-color: var(--card-dark);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero h2 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            main {
+                margin-right: 0;
+            }
+
+            nav {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>تطبيقات الجافاسكريبت</h1>
+        <div class="header-controls">
+            <button class="theme-toggle" aria-label="تبديل الوضع المظلم">
+                <i class="fas fa-moon"></i>
+            </button>
+            <button class="menu-btn" aria-label="القائمة">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <nav id="sidebar">
+        <ul>
+            <li><a href="#task1" data-task="task1">
+                <i class="fas fa-tasks"></i> تطبيق 1</a>
+            </li>
+            <li><a href="#task2" data-task="task2">
+                <i class="fas fa-tasks"></i> تطبيق 2</a>
+            </li>
+            <li><a href="#task3" data-task="task3">
+                <i class="fas fa-tasks"></i> تطبيق 3</a>
+            </li>
+            <li><a href="#task4" data-task="task4">
+                <i class="fas fa-tasks"></i> تطبيق 4</a>
+            </li>
+            <li><a href="#task5" data-task="task5">
+                <i class="fas fa-tasks"></i> تطبيق 5</a>
+            </li>
+            <li><a href="#task6" data-task="task6">
+                <i class="fas fa-tasks"></i> تطبيق 6</a>
+            </li>
+            <li><a href="#task7" data-task="task7">
+                <i class="fas fa-tasks"></i> تطبيق 7</a>
+            </li>
+            <li><a href="#task8" data-task="task8">
+                <i class="fas fa-tasks"></i> تطبيق 8</a>
+            </li>
+            <li><a href="#task9" data-task="task9">
+                <i class="fas fa-tasks"></i> تطبيق 9</a>
+            </li>
+            <li><a href="#task10" data-task="task10">
+                <i class="fas fa-tasks"></i> تطبيق 10</a>
+            </li>
+            <li><a href="#task11" data-task="task11">
+                <i class="fas fa-tasks"></i> تطبيق 11</a>
+            </li>
+            <li><a href="#task12" data-task="task12">
+                <i class="fas fa-tasks"></i> تطبيق 12</a>
+            </li>
+            <li><a href="#task13" data-task="task13">
+                <i class="fas fa-tasks"></i> تطبيق 13</a>
+            </li>
+            <li><a href="#task14" data-task="task14">
+                <i class="fas fa-tasks"></i> تطبيق 14</a>
+            </li>
+            <li><a href="#task15" data-task="task15">
+                <i class="fas fa-tasks"></i> تطبيق 15</a>
+            </li>
+            <li><a href="#task16" data-task="task16">
+                <i class="fas fa-tasks"></i> تطبيق 16</a>
+            </li>
+            <li><a href="#task17" data-task="task17">
+                <i class="fas fa-tasks"></i> تطبيق 17</a>
+            </li>
+            <li><a href="#task18" data-task="task18">
+                <i class="fas fa-tasks"></i> تطبيق 18</a>
+            </li>
+            <li><a href="#task19" data-task="task19">
+                <i class="fas fa-tasks"></i> تطبيق 19</a>
+            </li>
+            <li><a href="#task20" data-task="task20">
+                <i class="fas fa-tasks"></i> تطبيق 20</a>
+            </li>
+            <li><a href="#task21" data-task="task21">
+                <i class="fas fa-tasks"></i> تطبيق 21</a>
+            </li>
+            <li><a href="#task22" data-task="task22">
+                <i class="fas fa-tasks"></i> تطبيق 22</a>
+            </li>
+        </ul>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <h2>مرحباً بك في منصة تطبيقات الجافاسكريبت </h2>
+                <p>منصة متكاملة لعرض التطبيقات المطلوبة في المتابعة بكفاءة عالية</p>
+                <p>إعداد م.أسامة زينهم</p>
+                <!-- Add an elegent button that redirects to "https://wa.me/201116771405" with fantastic animation and icon-->
+                <a href="https://wa.me/201116771405" target="_blank" class="whatsapp-button" rel="noopener noreferrer">
+                    <i class="fab fa-whatsapp"></i>احجز Session الـ Mentorship
+                </a>
+
+                <div class="featured-tasks">
+                    <h3>تطبيقات مميزة</h3>
+                    <div class="task-carousel-container">
+                        <div class="featured-boxes">
+                            <div class="task-card">
+                                <i class="fas fa-comment-dots"></i>
+                                <h4>رسالة ترحيب تفاعلية</h4>
+                                <p>تطبيق تفاعلي يقوم بإنشاء رسائل ترحيب مخصصة للمستخدمين</p>
+                                <a href="#task1" data-task="task1" class="task-link">عرض التطبيق</a>
+                            </div>
+                            <div class="task-card">
+                                <i class="fas fa-calculator"></i>
+                                <h4>آلة حاسبة تفاعلية</h4>
+                                <p>آلة حاسبة متطورة تدعم العمليات الحسابية الأساسية</p>
+                                <a href="#task2" data-task="task2" class="task-link">عرض التطبيق</a>
+                            </div>
+                            <div class="task-card">
+                                <i class="fas fa-calendar-check"></i>
+                                <h4>فحص أيام الأسبوع</h4>
+                                <p>تطبيق للتحقق من نوع اليوم (عمل أو عطلة) بناءً على اليوم المدخل</p>
+                                <a href="#task3" data-task="task3" class="task-link">عرض التطبيق</a>
+                            </div>
+                            <div class="task-card">
+                                <i class="fas fa-tasks"></i>
+                                <h4>قائمة المهام</h4>
+                                <p>تطبيق لإدارة المهام اليومية مع إمكانية الإضافة والحذف</p>
+                                <a href="#task4" data-task="task4" class="task-link">عرض التطبيق</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </section>
+        <div id="landing">
+            <h2>اختر تطبيق للبدء</h2>
+            <p>يمكنك اختيار أي تطبيق من القائمة الجانبية للبدء في العرض</p>
+        </div>
+        <div id="task-content"></div>
+    </main>
+
+    <script>
+        // DOM Elements
+        const sidebar = document.getElementById('sidebar');
+        const menuBtn = document.querySelector('.menu-btn');
+        const themeToggle = document.querySelector('.theme-toggle');
+        const links = document.querySelectorAll('nav a, .task-link');
+        const taskContent = document.getElementById('task-content');
+        const landing = document.getElementById('landing');
+        const hero = document.querySelector('.hero');
+
+        // Enhanced Routing System with Script Isolation
+        class EnhancedRouter {
+            constructor() {
+                this.routes = {};
+                this.currentTask = null;
+                this.currentTaskContext = null;
+                this.taskScripts = [];
+                this.taskIntervals = [];
+                this.taskTimeouts = [];
+                this.taskEventListeners = [];
+                this.init();
+            }
+
+            init() {
+                // Register routes for all tasks
+                for (let i = 1; i <= 22; i++) {
+                    this.routes[`task${i}`] = `task${i}.html`;
+                }
+                
+                // Listen for hash changes
+                window.addEventListener('hashchange', () => this.handleRoute());
+                
+                // Handle initial route if page is already loaded
+                if (document.readyState === 'complete') {
+                    setTimeout(() => this.handleRoute(), 100);
+                }
+            }
+
+            // Cleanup previous task resources
+            cleanupCurrentTask() {
+                // Clear all task-related intervals
+                this.taskIntervals.forEach(interval => clearInterval(interval));
+                this.taskIntervals = [];
+                
+                // Clear all task-related timeouts
+                this.taskTimeouts.forEach(timeout => clearTimeout(timeout));
+                this.taskTimeouts = [];
+                
+                // Remove task-specific event listeners
+                this.taskEventListeners.forEach(({element, event, handler}) => {
+                    element.removeEventListener(event, handler);
+                });
+                this.taskEventListeners = [];
+                
+                // Remove task scripts
+                this.taskScripts.forEach(script => {
+                    if (script.parentNode) {
+                        script.parentNode.removeChild(script);
+                    }
+                });
+                this.taskScripts = [];
+                
+                // Remove task styles
+                const existingStyles = document.querySelectorAll('[data-task-style]');
+                existingStyles.forEach(style => style.remove());
+                
+                // Clear task content and force garbage collection
+                taskContent.innerHTML = '';
+                
+                // Additional memory cleanup
+                this.performMemoryCleanup();
+            }
+            
+            // Enhanced memory cleanup for better performance
+            performMemoryCleanup() {
+                // Remove any orphaned DOM elements
+                const orphanedElements = document.querySelectorAll('[data-task-script], [data-task-style]');
+                orphanedElements.forEach(element => {
+                    if (element.parentNode) {
+                        element.parentNode.removeChild(element);
+                    }
+                });
+                
+                // Clear any global variables that might have been created by tasks
+                const globalVarsToClean = ['taskData', 'taskConfig', 'taskState', 'currentTaskData'];
+                globalVarsToClean.forEach(varName => {
+                    if (window[varName]) {
+                        delete window[varName];
+                    }
+                });
+                
+                // Force garbage collection if available (development only)
+                if (window.gc && typeof window.gc === 'function') {
+                    try {
+                        window.gc();
+                    } catch (e) {
+                        // Ignore errors in production
+                    }
+                }
+            }
+
+            async loadTaskContent(taskFile) {
+                try {
+                    // Cleanup previous task first
+                    this.cleanupCurrentTask();
+                    
+                    const response = await fetch(taskFile);
+                    if (!response.ok) throw new Error(`Failed to load ${taskFile}`);
+                    const html = await response.text();
+                    
+                    // Create a temporary container to parse the HTML
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    
+                    // Extract and preserve styles from the head
+                    const styles = doc.querySelectorAll('style');
+                    let styleContent = '';
+                    styles.forEach(style => {
+                        styleContent += style.textContent;
+                    });
+                    
+                    // Create a style element for this task
+                    if (styleContent) {
+                        const taskStyle = document.createElement('style');
+                        taskStyle.textContent = styleContent;
+                        taskStyle.setAttribute('data-task-style', taskFile);
+                        document.head.appendChild(taskStyle);
+                    }
+                    
+                    // Get only the body content to avoid head conflicts
+                    const bodyContent = doc.body.innerHTML;
+                    
+                    // Load content into task container
+                    taskContent.innerHTML = bodyContent;
+                    
+                    // Execute scripts with proper isolation
+                    await this.executeTaskScripts(doc, taskFile);
+                    
+                    return true;
+                } catch (error) {
+                    console.error('Error loading task:', error);
+                    taskContent.innerHTML = `
+                        <div style="padding: 2rem; text-align: center; color: #e74c3c;">
+                            <h2>خطأ في تحميل التطبيق</h2>
+                            <p>عذراً، حدث خطأ أثناء تحميل التطبيق المطلوب.</p>
+                        </div>
+                    `;
+                    return false;
+                }
+            }
+
+            // Execute task scripts with proper isolation and timing
+            async executeTaskScripts(doc, taskFile) {
+                const scripts = doc.querySelectorAll('script');
+                
+                for (const script of scripts) {
+                    if (script.src) {
+                        // External script
+                        await this.loadExternalScript(script.src, taskFile);
+                    } else {
+                        // Inline script - modify to work without DOMContentLoaded
+                        let scriptContent = script.textContent;
+                        
+                        // More robust DOMContentLoaded replacement
+                        // Check if script contains DOMContentLoaded
+                        if (scriptContent.includes('DOMContentLoaded')) {
+                            // Simple but effective replacement - just remove the event listener wrapper
+                            // and execute the function content immediately
+                            
+                            // Find the start of DOMContentLoaded event listener (handle both single and double quotes)
+                            let domLoadedStart = scriptContent.indexOf('document.addEventListener("DOMContentLoaded"');
+                            if (domLoadedStart === -1) {
+                                domLoadedStart = scriptContent.indexOf('document.addEventListener(\'DOMContentLoaded\'');
+                            }
+                            if (domLoadedStart !== -1) {
+                                // Find the function start
+                                const functionStart = scriptContent.indexOf('function', domLoadedStart);
+                                if (functionStart !== -1) {
+                                    // Find the opening brace of the function
+                                    const openBrace = scriptContent.indexOf('{', functionStart);
+                                    if (openBrace !== -1) {
+                                        // Find the matching closing brace
+                                        let braceCount = 0;
+                                        let closeBrace = -1;
+                                        for (let i = openBrace; i < scriptContent.length; i++) {
+                                            if (scriptContent[i] === '{') braceCount++;
+                                            if (scriptContent[i] === '}') {
+                                                braceCount--;
+                                                if (braceCount === 0) {
+                                                    closeBrace = i;
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                        
+                                        if (closeBrace !== -1) {
+                                            // Extract the function content (without the braces)
+                                            const functionContent = scriptContent.substring(openBrace + 1, closeBrace);
+                                            
+                                            // Replace the entire DOMContentLoaded block with immediate execution
+                                            const beforeBlock = scriptContent.substring(0, domLoadedStart);
+                                            const afterBlock = scriptContent.substring(scriptContent.indexOf('});', closeBrace) + 3);
+                                            
+                                            scriptContent = beforeBlock + '(function() {' + functionContent + '})();' + afterBlock;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        
+                        // Handle jQuery-style ready (simpler approach)
+                        if (scriptContent.includes('$(document).ready')) {
+                            scriptContent = scriptContent.replace(
+                                /\$\(document\)\.ready\s*\(/g,
+                                '(function() { return ('
+                            ).replace(/\);\s*$/, '); })();');
+                        }
+                        
+                        // Handle window.onload
+                        if (scriptContent.includes('window.onload')) {
+                            scriptContent = scriptContent.replace(
+                                /window\.onload\s*=\s*function/g,
+                                '(function'
+                            ).replace(/;\s*$/, '(); ');
+                        }
+                        
+                        // Wrap the script in an IIFE for isolation
+                        const wrappedScript = `
+                            (function() {
+                                try {
+                                    // Override setInterval and setTimeout to track them
+                                    const originalSetInterval = window.setInterval;
+                                    const originalSetTimeout = window.setTimeout;
+                                    
+                                    window.setInterval = function(fn, delay) {
+                                        const id = originalSetInterval(fn, delay);
+                                        if (window.router) window.router.taskIntervals.push(id);
+                                        return id;
+                                    };
+                                    
+                                    window.setTimeout = function(fn, delay) {
+                                        const id = originalSetTimeout(fn, delay);
+                                        if (window.router) window.router.taskTimeouts.push(id);
+                                        return id;
+                                    };
+                                    
+                                    ${scriptContent}
+                                    
+                                    // Restore original functions
+                                    window.setInterval = originalSetInterval;
+                                    window.setTimeout = originalSetTimeout;
+                                } catch (error) {
+                                    console.error('Error executing task script for ${taskFile}:', error);
+                                }
+                            })();
+                        `;
+                        
+                        const newScript = document.createElement('script');
+                        newScript.textContent = wrappedScript;
+                        newScript.setAttribute('data-task-script', taskFile);
+                        document.body.appendChild(newScript);
+                        this.taskScripts.push(newScript);
+                    }
+                }
+            }
+
+            // Load external script with promise
+            loadExternalScript(src, taskFile) {
+                return new Promise((resolve, reject) => {
+                    const script = document.createElement('script');
+                    script.src = src;
+                    script.setAttribute('data-task-script', taskFile);
+                    script.onload = () => resolve();
+                    script.onerror = () => reject(new Error(`Failed to load script: ${src}`));
+                    document.head.appendChild(script);
+                    this.taskScripts.push(script);
+                });
+            }
+
+            async handleRoute() {
+                const hash = window.location.hash.slice(1); // Remove #
+                
+                if (hash && this.routes[hash]) {
+                    // Show task content
+                    this.showTaskContent();
+                    
+                    // Load task content
+                    const success = await this.loadTaskContent(this.routes[hash]);
+                    if (success) {
+                        this.currentTask = hash;
+                        this.updateActiveLink(hash);
+                    }
+                } else {
+                    // Show landing page
+                    this.showLandingPage();
+                    this.currentTask = null;
+                    this.updateActiveLink(null);
+                }
+            }
+
+            showTaskContent() {
+                landing.style.display = 'none';
+                hero.style.display = 'none';
+                taskContent.classList.add('show');
+            }
+
+            showLandingPage() {
+                landing.style.display = 'block';
+                hero.style.display = 'flex';
+                taskContent.classList.remove('show');
+            }
+
+            updateActiveLink(taskId) {
+                // Remove active class from all links
+                document.querySelectorAll('nav a').forEach(link => {
+                    link.classList.remove('active');
+                });
+                
+                // Add active class to current task link
+                if (taskId) {
+                    const activeLink = document.querySelector(`nav a[data-task="${taskId}"]`);
+                    if (activeLink) {
+                        activeLink.classList.add('active');
+                    }
+                }
+            }
+
+            navigateToTask(taskId) {
+                window.location.hash = taskId;
+            }
+        }
+
+        // Initialize Enhanced Router
+        const router = new EnhancedRouter();
+        
+        // Make router globally accessible for script tracking
+        window.router = router;
+
+        // Toggle Sidebar
+        menuBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('visible');
+        });
+
+        // Theme Toggle - Set light mode as default
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            themeToggle.querySelector('i').classList.toggle('fa-moon');
+            themeToggle.querySelector('i').classList.toggle('fa-sun');
+        });
+
+        // Handle Navigation Links
+        links.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const taskId = link.getAttribute('data-task');
+                if (taskId) {
+                    router.navigateToTask(taskId);
+                }
+                
+                // Close sidebar on mobile
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.remove('visible');
+                }
+            });
+        });
+
+        // Close sidebar when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!sidebar.contains(e.target) && !menuBtn.contains(e.target)) {
+                sidebar.classList.remove('visible');
+            }
+        });
+
+        // Handle hash changes for routing
+        window.addEventListener('hashchange', () => {
+            router.handleRoute();
+        });
+
+        // Handle initial page load
+        window.addEventListener('load', () => {
+            // Set light mode as default (don't check system preference)
+            // User can manually toggle to dark mode if needed
+            
+            // Initialize hero section animation
+            hero.style.opacity = '0';
+            setTimeout(() => {
+                hero.style.opacity = '1';
+                hero.style.transition = 'opacity 0.5s ease-in-out';
+            }, 100);
+            
+            // Handle initial routing
+            setTimeout(() => router.handleRoute(), 200);
+        });
+
+        // Handle resize events
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                sidebar.style.transform = 'none';
+            }
+        });
+
+        // Handle keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            // Close sidebar with Escape key
+            if (e.key === 'Escape' && sidebar.classList.contains('visible')) {
+                sidebar.classList.remove('visible');
+            }
+        });
+    </script>
+</body>
+</html>
