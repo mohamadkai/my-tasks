@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Product Filtering System</title>
+
+  <style>
+    /* عمل Reset بسيط */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* تنسيق الصفحة كلها */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f3f4f6;
+      color: #111827;
+      padding: 20px;
+    }
+
+    /* الصندوق الرئيسي */
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    }
+
+    /* عنوان الصفحة */
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #1f2937;
+    }
+
+    /* مكان الأزرار */
+    .buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    /* تنسيق الأزرار */
+    button {
+      border: none;
+      background-color: #2563eb;
+      color: white;
+      padding: 12px 18px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    /* تأثير بسيط عند الوقوف على الزر */
+    button:hover {
+      background-color: #1d4ed8;
+    }
+
+    /* مكان عرض المنتجات */
+    #productsContainer {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 15px;
+    }
+
+    /* كارت المنتج */
+    .product-card {
+      background-color: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 15px;
+    }
+
+    /* اسم المنتج */
+    .product-card h3 {
+      margin-bottom: 10px;
+      color: #111827;
+    }
+
+    /* بيانات المنتج */
+    .product-card p {
+      margin-bottom: 8px;
+      color: #374151;
+      line-height: 1.6;
+    }
+
+    /* رسالة لو مفيش منتجات */
+    .empty-message {
+      text-align: center;
+      font-size: 18px;
+      color: #dc2626;
+      padding: 20px 0;
+      grid-column: 1 / -1;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>نظام فلترة المنتجات</h1>
+
+    <div class="buttons">
+      <!-- زرار لعرض كل المنتجات بعد إضافة الضريبة -->
+      <button id="showAllBtn">عرض كل المنتجات</button>
+
+      <!-- زرار لعرض المنتجات اللي سعرها النهائي أكبر من 100 -->
+      <button id="filterBtn">عرض المنتجات فوق 100</button>
+    </div>
+
+    <!-- المكان اللي هنطبع فيه المنتجات -->
+    <div id="productsContainer"></div>
+  </div>
+
+  <script>
+    // دي الـ array الأصلية وبتحتوي على مجموعة منتجات
+    // كل منتج عبارة عن object فيه:
+    // name / price / category
+    let products = [
+      {
+        name: "لابتوب",
+        price: 1000,
+        category: "إلكترونيات"
+      },
+      {
+        name: "ماوس",
+        price: 50,
+        category: "إلكترونيات"
+      },
+      {
+        name: "كتاب",
+        price: 40,
+        category: "تعليم"
+      },
+      {
+        name: "موبايل",
+        price: 800,
+        category: "إلكترونيات"
+      },
+      {
+        name: "كرسي",
+        price: 120,
+        category: "أثاث"
+      }
+    ];
+
+    // هنا استخدمنا map
+    // الهدف: نعمل array جديدة
+    // ونضيف لكل منتج property جديدة اسمها finalPrice
+    // finalPrice = price + 14% ضريبة
+    let productsWithFinalPrice = products.map(function (product) {
+      // رجع object جديد فيه كل بيانات المنتج
+      // ومعاها finalPrice
+      return {
+        name: product.name,
+        price: product.price,
+        category: product.category,
+        finalPrice: product.price + (product.price * 14 / 100)
+      };
+    });
+
+    // جبنا عنصر الـ container من الـ HTML
+    let productsContainer = document.getElementById("productsContainer");
+
+    // جبنا زر عرض الكل
+    let showAllBtn = document.getElementById("showAllBtn");
+
+    // جبنا زر الفلترة
+    let filterBtn = document.getElementById("filterBtn");
+
+    // دي function مسؤولة عن عرض المنتجات على الصفحة
+    function displayProducts(productsArray) {
+      // في الأول بنفضي المكان عشان منكررش العرض
+      productsContainer.innerHTML = "";
+
+      // لو الـ array فاضية نعرض رسالة
+      if (productsArray.length === 0) {
+        productsContainer.innerHTML = '<p class="empty-message">لا توجد منتجات مطابقة</p>';
+        return;
+      }
+
+      // بنلف على كل منتج جوا الـ array
+      for (let i = 0; i < productsArray.length; i++) {
+        // بننشئ div جديد لكل منتج
+        let card = document.createElement("div");
+
+        // بنديله class عشان ياخد التنسيق
+        card.className = "product-card";
+
+        // بنحط البيانات جواه
+        card.innerHTML =
+          "<h3>" + productsArray[i].name + "</h3>" +
+          "<p><strong>السعر الأصلي:</strong> " + productsArray[i].price + "</p>" +
+          "<p><strong>الفئة:</strong> " + productsArray[i].category + "</p>" +
+          "<p><strong>السعر النهائي بعد الضريبة:</strong> " + productsArray[i].finalPrice.toFixed(2) + "</p>";
+
+        // بنضيف الكارت جوه الـ container
+        productsContainer.appendChild(card);
+      }
+    }
+
+    // لما المستخدم يضغط على زر عرض الكل
+    // نعرض كل المنتجات بعد إضافة finalPrice
+    showAllBtn.onclick = function () {
+      displayProducts(productsWithFinalPrice);
+    };
+
+    // لما المستخدم يضغط على زر الفلترة
+    // نستخدم filter عشان نجيب المنتجات اللي finalPrice بتاعها أكبر من 100
+    filterBtn.onclick = function () {
+      let filteredProducts = productsWithFinalPrice.filter(function (product) {
+        return product.finalPrice > 100;
+      });
+
+      // بعد الفلترة نعرض النتائج
+      displayProducts(filteredProducts);
+    };
+
+    // أول ما الصفحة تفتح نعرض كل المنتجات تلقائي
+    displayProducts(productsWithFinalPrice);
+  </script>
+</body>
+</html>
