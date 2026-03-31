@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- تحديد نوع الترميز -->
+  <meta charset="UTF-8">
+
+  <!-- علشان الصفحة تبقى مناسبة للموبايل -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- عنوان الصفحة -->
+  <title>Dynamic Clock And URL Manager</title>
+
+  <style>
+    /* تنسيق بسيط للجسم */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      padding: 30px;
+      text-align: center;
+    }
+
+    /* صندوق يحتوي كل العناصر */
+    .container {
+      background-color: white;
+      padding: 20px;
+      border-radius: 12px;
+      max-width: 500px;
+      margin: auto;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* شكل الساعة */
+    #clock {
+      font-size: 40px;
+      font-weight: bold;
+      margin: 20px 0;
+      color: #333;
+    }
+
+    /* تنسيق الأزرار */
+    button {
+      padding: 10px 15px;
+      margin: 5px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    /* تنسيق الـ input */
+    input {
+      padding: 10px;
+      width: 70%;
+      margin-top: 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+
+    /* صندوق الأزرار */
+    .buttons {
+      margin-bottom: 15px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- الصندوق الرئيسي -->
+  <div class="container">
+
+    <!-- عنوان الصفحة -->
+    <h1>Dynamic Clock And URL Manager</h1>
+
+    <!-- المكان اللي الساعة هتظهر فيه -->
+    <div id="clock">00:00:00</div>
+
+    <!-- صندوق أزرار التحكم -->
+    <div class="buttons">
+
+      <!-- زر تشغيل الساعة -->
+      <button id="startBtn">Start Clock</button>
+
+      <!-- زر إيقاف الساعة -->
+      <button id="stopBtn">Stop Clock</button>
+    </div>
+
+    <!-- حقل إدخال الرابط -->
+    <input type="text" id="urlInput" placeholder="Enter URL Here">
+
+    <!-- زر الذهاب للرابط -->
+    <button id="goBtn">Go To URL</button>
+  </div>
+
+  <script>
+    // مسك عنصر الساعة من الـ HTML
+    const clock = document.getElementById("clock");
+
+    // مسك زر Start
+    const startBtn = document.getElementById("startBtn");
+
+    // مسك زر Stop
+    const stopBtn = document.getElementById("stopBtn");
+
+    // مسك input الرابط
+    const urlInput = document.getElementById("urlInput");
+
+    // مسك زر Go
+    const goBtn = document.getElementById("goBtn");
+
+    // متغير هنخزن فيه الـ interval id
+    let clockInterval = null;
+
+    // function مسؤولة عن تحديث الوقت
+    function updateClock() {
+      // إنشاء object جديد من التاريخ والوقت الحالي
+      const now = new Date();
+
+      // جلب الساعات الحالية
+      let hours = now.getHours();
+
+      // جلب الدقائق الحالية
+      let minutes = now.getMinutes();
+
+      // جلب الثواني الحالية
+      let seconds = now.getSeconds();
+
+      // لو الساعات أقل من 10 ضيف صفر قبلها
+      if (hours < 10) {
+        // تحويلها لشكل 2 digits
+        hours = "0" + hours;
+      }
+
+      // لو الدقائق أقل من 10 ضيف صفر قبلها
+      if (minutes < 10) {
+        // تحويلها لشكل 2 digits
+        minutes = "0" + minutes;
+      }
+
+      // لو الثواني أقل من 10 ضيف صفر قبلها
+      if (seconds < 10) {
+        // تحويلها لشكل 2 digits
+        seconds = "0" + seconds;
+      }
+
+      // وضع الوقت النهائي داخل عنصر الساعة
+      clock.textContent = `${hours}:${minutes}:${seconds}`;
+    }
+
+    // function مسؤولة عن تشغيل الساعة
+    function startClock() {
+      // لو الساعة شغالة بالفعل اخرج ولا تشغل interval جديدة
+      if (clockInterval !== null) {
+        return;
+      }
+
+      // تحديث الساعة فورًا بدل ما نستنى أول ثانية
+      updateClock();
+
+      // تشغيل updateClock كل 1000 ملي ثانية
+      clockInterval = setInterval(updateClock, 1000);
+    }
+
+    // function مسؤولة عن إيقاف الساعة
+    function stopClock() {
+      // إيقاف الـ interval الحالية
+      clearInterval(clockInterval);
+
+      // إعادة المتغير لحالته الأصلية
+      clockInterval = null;
+    }
+
+    // ربط زر Start بتشغيل الساعة
+    startBtn.addEventListener("click", startClock);
+
+    // ربط زر Stop بإيقاف الساعة
+    stopBtn.addEventListener("click", stopClock);
+
+    // ربط زر Go بحدث click
+    goBtn.addEventListener("click", function () {
+      // قراءة القيمة من الـ input بعد إزالة المسافات
+      let urlValue = urlInput.value.trim();
+
+      // لو المستخدم مدخلش أي رابط
+      if (urlValue === "") {
+        // إظهار رسالة تنبيه
+        alert("Please enter a URL");
+
+        // وقف تنفيذ الكود
+        return;
+      }
+
+      // لو المستخدم لم يكتب http أو https
+      if (!urlValue.startsWith("http://") && !urlValue.startsWith("https://")) {
+        // أضف https بشكل تلقائي في البداية
+        urlValue = "https://" + urlValue;
+      }
+
+      // الذهاب إلى الرابط المكتوب
+      window.location.href = urlValue;
+    });
+
+    // تشغيل الساعة أول ما الصفحة تفتح
+    startClock();
+  </script>
+</body>
+</html>

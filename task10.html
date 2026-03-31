@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Management System</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f7fb;
+      margin: 0;
+      padding: 30px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      background: #fff;
+      padding: 24px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    h1 {
+      margin-top: 0;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    form {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    form input,
+    form button {
+      padding: 12px;
+      border: 1px solid #d0d7e2;
+      border-radius: 10px;
+      font-size: 14px;
+    }
+
+    form button {
+      background: #2563eb;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    form button:hover {
+      background: #1d4ed8;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 12px;
+    }
+
+    thead {
+      background: #111827;
+      color: white;
+    }
+
+    th,
+    td {
+      padding: 14px;
+      text-align: left;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    tbody tr:hover {
+      background: #f9fafb;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .actions button {
+      padding: 8px 12px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      color: white;
+    }
+
+    .edit-btn,
+    .save-btn {
+      background: #f59e0b;
+    }
+
+    .delete-btn {
+      background: #dc2626;
+    }
+
+    .cancel-btn {
+      background: #6b7280;
+    }
+
+    .editing {
+      background: #fff7ed !important;
+    }
+
+    td input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+    }
+
+    .empty-message {
+      text-align: center;
+      padding: 20px;
+      color: #6b7280;
+      font-weight: bold;
+    }
+
+    @media (max-width: 768px) {
+      form {
+        grid-template-columns: 1fr;
+      }
+
+      th,
+      td {
+        font-size: 13px;
+      }
+
+      .actions {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>User Management System</h1>
+
+    <form id="userForm">
+      <input type="text" id="name" placeholder="Enter Name" />
+      <input type="number" id="age" placeholder="Enter Age" />
+      <input type="email" id="email" placeholder="Enter Email" />
+      <button type="submit">Add User</button>
+    </form>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Age</th>
+          <th>Email</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="usersBody"></tbody>
+    </table>
+  </div>
+
+  <script>
+//    الفورم
+const userForm = document.getElementById("userForm");
+
+// inputs
+const nameInput = document.getElementById("name");
+const ageInput = document.getElementById("age");
+const emailInput = document.getElementById("email");
+// الجدول اللي هنضيف فيه الداتا 
+const usersBody = document.getElementById("usersBody");
+// البيانات اللي هتظهر وقت فتح الصفحة 
+let users = [
+  { id: 1, name: "Ahmed", age: 25, email: "ahmed@test.com" },
+  { id: 2, name: "Sara", age: 22, email: "sara@test.com" },
+  { id: 3, name: "Omar", age: 30, email: "omar@test.com" }
+];
+// ده عداد علشان كل user جديد ياخد id مختلف
+let nextId = 4;
+// function  مسؤولة عن إنشاء أي زرار
+function createButton(text ,className){
+    // زرار جديد
+    const button = document.createElement("button");
+    // النص الل هيظهر على الزرار 
+    button.textContent = text;
+      // اديناه class عشان ياخد الشكل من CSS
+button.className= className;
+return button;
+}
+ // function مسؤولة عن عمل صف <tr> كامل لمستخدم واحد
+function createUserRow(user){
+    // صف جديد
+    const tr = document.createElement("tr");
+// خزنا id المستخدم جوه الصف
+  // علشان نعرف بعد كده الصف ده تابع لأنهي user
+  tr.dataset.id = user.id;
+    // خلية الاسم
+const nameTd = document.createElement("td");
+nameTd.className = "name-cell";
+nameTd.textContent = user.name;
+  // خلية السن
+const ageTd = document.createElement("td");
+ageTd.className ="age-cell";
+ageTd.textContent = user.age;
+    // خلية الإيميل
+const emailTd = document.createElement("td");
+emailTd.className = "email-cell";
+emailTd.textContent = user.email;
+ // خلية الأزرار
+  const actionsTd = document.createElement("td");
+
+  // صندوق للأزرار
+  const actionsBox = document.createElement("div");
+  actionsBox.className = "actions";
+
+  // زر التعديل
+  const editBtn = createButton("Edit", "edit-btn");
+
+  // زر الحذف
+  const deleteBtn = createButton("Delete", "delete-btn");
+ // حطينا الزرارين جوه صندوق الأزرار
+  actionsBox.append(editBtn, deleteBtn);
+
+  // حطينا صندوق الأزرار جوه خلية الأزرار
+  actionsTd.appendChild(actionsBox);
+
+  // حطينا كل الخلايا جوه الصف
+  tr.append(nameTd, ageTd, emailTd, actionsTd);
+
+  // رجعنا الصف كامل
+  return tr;
+}
+// function مسؤولة عن رسم كل الجدول من الأول
+function renderUsers() {
+  // بنفضي الجدول الأول
+  usersBody.innerHTML = "";
+
+  // لو مفيش مستخدمين
+  if (users.length === 0) {
+    const tr = document.createElement("tr");
+    const td = document.createElement("td");
+
+    // نخلي الخلية تمتد على 4 أعمدة
+    td.colSpan = 4;
+
+    td.className = "empty-message";
+    td.textContent = "No Users Found";
+
+    tr.appendChild(td);
+    usersBody.appendChild(tr);
+
+    return;
+  }
+
+  // لو فيه مستخدمين، نمشي عليهم واحد واحد
+  users.forEach((user) => {
+    const row = createUserRow(user);
+    usersBody.appendChild(row);
+  });
+}
+// function تضيف صف جديد فقط بدون إعادة رسم الجدول كله
+function addUserToTable(user) {
+  // لو كانت رسالة "No Users Found" موجودة
+  const emptyMessage = usersBody.querySelector(".empty-message");
+
+  if (emptyMessage) {
+    // نمسح الرسالة
+    usersBody.innerHTML = "";
+  }
+
+  // نعمل صف للمستخدم الجديد
+  const row = createUserRow(user);
+
+  // نضيفه في أول الجدول
+  usersBody.prepend(row);
+}
+// function تحول الصف إلى وضع التعديل
+function enterEditMode(row) {
+  // نضيف class علشان يبان إنه في وضع تعديل
+  row.classList.add("editing");
+
+  // جبنا الخلايا الأربعة من جوه الصف
+  const [nameCell, ageCell, emailCell, actionsCell] = row.children;
+
+  // حفظنا القيم الحالية قبل ما نحولها inputs
+  const currentName = nameCell.textContent;
+  const currentAge = ageCell.textContent;
+  const currentEmail = emailCell.textContent;
+
+  // input للاسم
+  const nameField = document.createElement("input");
+  nameField.type = "text";
+  nameField.value = currentName;
+
+  // input للسن
+  const ageField = document.createElement("input");
+  ageField.type = "number";
+  ageField.value = currentAge;
+
+  // input للإيميل
+  const emailField = document.createElement("input");
+  emailField.type = "email";
+  emailField.value = currentEmail;
+
+  // نفرغ الخلايا من النص الحالي
+  nameCell.textContent = "";
+  ageCell.textContent = "";
+  emailCell.textContent = "";
+
+  // نحط inputs بدل النصوص
+  nameCell.appendChild(nameField);
+  ageCell.appendChild(ageField);
+  emailCell.appendChild(emailField);
+
+  // نبدل أزرار Edit/Delete إلى Save/Cancel
+  const actionsBox = actionsCell.firstElementChild;
+  actionsBox.innerHTML = "";
+
+  const saveBtn = createButton("Save", "save-btn");
+  const cancelBtn = createButton("Cancel", "cancel-btn");
+
+  actionsBox.append(saveBtn, cancelBtn);
+}
+// function تحفظ التعديل
+function saveEditMode(row) {
+  // نجيب id من الصف
+  const userId = Number(row.dataset.id);
+
+  // نجيب الخلايا
+  const [nameCell, ageCell, emailCell, actionsCell] = row.children;
+
+  // نقرأ القيم الجديدة من الـ inputs
+  const newName = nameCell.firstElementChild.value.trim();
+  const newAge = ageCell.firstElementChild.value.trim();
+  const newEmail = emailCell.firstElementChild.value.trim();
+
+  // تحقق بسيط
+  if (!newName || !newAge || !newEmail) {
+    alert("Please fill all fields");
+    return;
+  }
+
+  // نجيب المستخدم الحقيقي من الـ array
+  const targetUser = users.find((user) => user.id === userId);
+
+  // نحدث بياناته
+  targetUser.name = newName;
+  targetUser.age = Number(newAge);
+  targetUser.email = newEmail;
+
+  // نلغي شكل التعديل
+  row.classList.remove("editing");
+
+  // نرجع النصوص بدل الـ inputs
+  nameCell.textContent = targetUser.name;
+  ageCell.textContent = targetUser.age;
+  emailCell.textContent = targetUser.email;
+
+  // نرجع أزرار Edit/Delete
+  const actionsBox = actionsCell.firstElementChild;
+  actionsBox.innerHTML = "";
+
+  const editBtn = createButton("Edit", "edit-btn");
+  const deleteBtn = createButton("Delete", "delete-btn");
+
+  actionsBox.append(editBtn, deleteBtn);
+}
+// function تلغي التعديل وترجع القيم الأصلية
+function cancelEditMode(row) {
+  // نجيب id المستخدم من الصف
+  const userId = Number(row.dataset.id);
+
+  // نجيب بيانات المستخدم الأصلية من الـ array
+  const targetUser = users.find((user) => user.id === userId);
+
+  // نجيب الخلايا
+  const [nameCell, ageCell, emailCell, actionsCell] = row.children;
+
+  // نلغي وضع التعديل
+  row.classList.remove("editing");
+
+  // نرجع النصوص الأصلية
+  nameCell.textContent = targetUser.name;
+  ageCell.textContent = targetUser.age;
+  emailCell.textContent = targetUser.email;
+
+  // نرجع الأزرار الأصلية
+  const actionsBox = actionsCell.firstElementChild;
+  actionsBox.innerHTML = "";
+
+  const editBtn = createButton("Edit", "edit-btn");
+  const deleteBtn = createButton("Delete", "delete-btn");
+
+  actionsBox.append(editBtn, deleteBtn);
+}
+// لما المستخدم يعمل submit للفورم
+userForm.addEventListener("submit", function (event) {
+  // نمنع إعادة تحميل الصفحة
+  event.preventDefault();
+
+  // نقرأ القيم من الـ inputs
+  const name = nameInput.value.trim();
+  const age = ageInput.value.trim();
+  const email = emailInput.value.trim();
+
+  // تحقق بسيط
+  if (!name || !age || !email) {
+    alert("Please fill all fields");
+    return;
+  }
+
+  // نعمل user جديد
+  const newUser = {
+    id: nextId++,
+    name,
+    age: Number(age),
+    email
+  };
+
+  // نضيفه في أول الـ array
+  users.unshift(newUser);
+
+  // نضيفه في الجدول
+  addUserToTable(newUser);
+
+  // نفرغ الفورم
+  userForm.reset();
+
+  // نخلي المؤشر يرجع لأول input
+  nameInput.focus();
+});
+// Event واحدة على tbody كله بدل ما نربط event لكل زرار لوحده
+usersBody.addEventListener("click", function (event) {
+  // العنصر اللي اتضغط عليه فعلاً
+  const clickedButton = event.target;
+
+  // نجيب الصف اللي الزرار موجود فيه
+  const row = clickedButton.closest("tr");
+
+  // لو مفيش صف نوقف
+  if (!row) return;
+
+  // نجيب id المستخدم
+  const userId = Number(row.dataset.id);
+
+  // لو المستخدم ضغط Delete
+  if (clickedButton.classList.contains("delete-btn")) {
+    // نحذف من الـ array
+    users = users.filter((user) => user.id !== userId);
+
+    // نحذف الصف من الصفحة
+    row.remove();
+
+    // لو الجدول فضي، ارسم رسالة no users
+    if (users.length === 0) {
+      renderUsers();
+    }
+  }
+
+  // لو ضغط Edit
+  if (clickedButton.classList.contains("edit-btn")) {
+    enterEditMode(row);
+  }
+
+  // لو ضغط Save
+  if (clickedButton.classList.contains("save-btn")) {
+    saveEditMode(row);
+  }
+
+  // لو ضغط Cancel
+  if (clickedButton.classList.contains("cancel-btn")) {
+    cancelEditMode(row);
+  }
+});
+// أول ما الصفحة تفتح، اعرض المستخدمين الموجودين
+renderUsers();
+  </script>
+</body>
+</html>

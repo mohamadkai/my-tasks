@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Library System</title>
+
+  <style>
+    /* تنسيق عام للصفحة */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* شكل الصفحة */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f3f4f6;
+      color: #111827;
+      padding: 20px;
+    }
+
+    /* الصندوق الرئيسي */
+    .container {
+      max-width: 900px;
+      margin: auto;
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    /* عنوان الصفحة */
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    /* صندوق إجمالي الصفحات */
+    .total-box {
+      background-color: #e0f2fe;
+      border: 1px solid #7dd3fc;
+      padding: 15px;
+      border-radius: 12px;
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    /* مكان الأزرار */
+    .buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    /* تنسيق الأزرار */
+    button {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 10px;
+      background-color: #2563eb;
+      color: white;
+      cursor: pointer;
+      font-size: 15px;
+    }
+
+    /* تأثير بسيط على الزر */
+    button:hover {
+      background-color: #1d4ed8;
+    }
+
+    /* مكان عرض الكتب */
+    #booksContainer {
+      display: grid;
+      gap: 15px;
+    }
+
+    /* كارت القسم */
+    .section-card {
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 15px;
+      background-color: #f9fafb;
+    }
+
+    /* عنوان القسم */
+    .section-card h2 {
+      margin-bottom: 12px;
+      color: #1d4ed8;
+    }
+
+    /* كارت الكتاب */
+    .book-card {
+      background-color: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+
+    /* الفقرات داخل الكتاب */
+    .book-card p {
+      margin-bottom: 6px;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>نظام عرض المكتبة</h1>
+
+    <!-- مكان عرض إجمالي عدد الصفحات -->
+    <div class="total-box">
+      إجمالي عدد الصفحات في المكتبة:
+      <span id="totalPages">0</span>
+    </div>
+
+    <!-- أزرار التصنيف -->
+    <div class="buttons">
+      <button id="showAllBtn">عرض كل الأقسام</button>
+      <button id="programmingBtn">قسم البرمجة</button>
+      <button id="novelsBtn">قسم الروايات</button>
+      <button id="selfDevBtn">قسم تطوير الذات</button>
+    </div>
+
+    <!-- المكان اللي هنظهر فيه الكتب -->
+    <div id="booksContainer"></div>
+  </div>
+
+  <script>
+    // هنا عملنا object بيمثل المكتبة كلها
+    let library = {
+      // اسم المكتبة
+      libraryName: "مكتبتي",
+
+      // الأقسام موجودة داخل array
+      sections: [
+        {
+          // اسم القسم الأول
+          sectionName: "البرمجة",
+
+          // الكتب الخاصة بالقسم الأول
+          books: [
+            {
+              title: "JavaScript Basics",
+              author: "Amr",
+              pages: 200
+            },
+            {
+              title: "HTML & CSS",
+              author: "Mona",
+              pages: 150
+            }
+          ]
+        },
+        {
+          // اسم القسم الثاني
+          sectionName: "الروايات",
+
+          // الكتب الخاصة بالقسم الثاني
+          books: [
+            {
+              title: "رحلة إلى المجهول",
+              author: "Ahmed",
+              pages: 300
+            },
+            {
+              title: "مدينة الضباب",
+              author: "Sara",
+              pages: 250
+            }
+          ]
+        },
+        {
+          // اسم القسم الثالث
+          sectionName: "تطوير الذات",
+
+          // الكتب الخاصة بالقسم الثالث
+          books: [
+            {
+              title: "ابدأ الآن",
+              author: "Ali",
+              pages: 180
+            },
+            {
+              title: "قوة العادات",
+              author: "Nour",
+              pages: 220
+            }
+          ]
+        }
+      ]
+    };
+
+    // هنا جبنا العنصر اللي هنكتب فيه إجمالي الصفحات
+    let totalPages = document.getElementById("totalPages");
+
+    // هنا جبنا المكان اللي هنعرض فيه الكتب
+    let booksContainer = document.getElementById("booksContainer");
+
+    // هنا جبنا الأزرار
+    let showAllBtn = document.getElementById("showAllBtn");
+    let programmingBtn = document.getElementById("programmingBtn");
+    let novelsBtn = document.getElementById("novelsBtn");
+    let selfDevBtn = document.getElementById("selfDevBtn");
+
+    // function لحساب إجمالي عدد الصفحات في كل المكتبة باستخدام reduce
+    function calculateTotalPages() {
+      // هنا بنستخدم reduce على الأقسام
+      let total = library.sections.reduce(function (sectionsTotal, currentSection) {
+        // هنا بنستخدم reduce على الكتب الموجودة داخل كل قسم
+        let booksPages = currentSection.books.reduce(function (booksTotal, currentBook) {
+          // هنا بنجمع عدد الصفحات
+          return booksTotal + currentBook.pages;
+        }, 0);
+
+        // هنا بنجمع صفحات القسم الحالي على مجموع الأقسام كله
+        return sectionsTotal + booksPages;
+      }, 0);
+
+      // هنا بنرجع إجمالي الصفحات
+      return total;
+    }
+
+    // function لعرض كل الأقسام والكتب
+    function displayAllSections() {
+      // هنا بنفضي مكان العرض الأول
+      booksContainer.innerHTML = "";
+
+      // هنا بنلف على الأقسام باستخدام forEach
+      library.sections.forEach(function (section) {
+        // هنا بنعمل div جديد للقسم
+        let sectionCard = document.createElement("div");
+
+        // هنا بندي للقسم class
+        sectionCard.className = "section-card";
+
+        // هنا بنكتب اسم القسم
+        let sectionTitle = document.createElement("h2");
+        sectionTitle.textContent = "القسم: " + section.sectionName;
+
+        // هنا بنضيف العنوان داخل الكارت
+        sectionCard.appendChild(sectionTitle);
+
+        // هنا بنلف على الكتب الموجودة داخل القسم
+        section.books.forEach(function (book) {
+          // هنا بنعمل كارت لكل كتاب
+          let bookCard = document.createElement("div");
+
+          // هنا بندي للكتاب class
+          bookCard.className = "book-card";
+
+          // هنا بنكتب بيانات الكتاب
+          bookCard.innerHTML =
+            "<p><strong>اسم الكتاب:</strong> " + book.title + "</p>" +
+            "<p><strong>المؤلف:</strong> " + book.author + "</p>" +
+            "<p><strong>عدد الصفحات:</strong> " + book.pages + "</p>";
+
+          // هنا بنضيف الكتاب داخل القسم
+          sectionCard.appendChild(bookCard);
+        });
+
+        // هنا بنضيف القسم كله داخل الصفحة
+        booksContainer.appendChild(sectionCard);
+      });
+    }
+
+    // function لعرض قسم واحد فقط
+    function displayOneSection(sectionName) {
+      // هنا بنفضي مكان العرض
+      booksContainer.innerHTML = "";
+
+      // هنا بنلف على الأقسام
+      library.sections.forEach(function (section) {
+        // هنا بنتأكد هل القسم الحالي هو اللي المستخدم عاوزه ولا لا
+        if (section.sectionName === sectionName) {
+          // هنا بنعمل كارت للقسم
+          let sectionCard = document.createElement("div");
+
+          // هنا بندي للكارت class
+          sectionCard.className = "section-card";
+
+          // هنا بنكتب اسم القسم
+          let sectionTitle = document.createElement("h2");
+          sectionTitle.textContent = "القسم: " + section.sectionName;
+
+          // هنا بنضيف العنوان داخل الكارت
+          sectionCard.appendChild(sectionTitle);
+
+          // هنا بنلف على الكتب بتاعة القسم
+          section.books.forEach(function (book) {
+            // هنا بنعمل كارت للكتاب
+            let bookCard = document.createElement("div");
+
+            // هنا بندي للكارت class
+            bookCard.className = "book-card";
+
+            // هنا بنحط بيانات الكتاب
+            bookCard.innerHTML =
+              "<p><strong>اسم الكتاب:</strong> " + book.title + "</p>" +
+              "<p><strong>المؤلف:</strong> " + book.author + "</p>" +
+              "<p><strong>عدد الصفحات:</strong> " + book.pages + "</p>";
+
+            // هنا بنضيف الكتاب للقسم
+            sectionCard.appendChild(bookCard);
+          });
+
+          // هنا بنضيف القسم داخل الصفحة
+          booksContainer.appendChild(sectionCard);
+        }
+      });
+    }
+
+    // هنا بنعرض إجمالي الصفحات في الصفحة
+    totalPages.textContent = calculateTotalPages();
+
+    // هنا زر عرض كل الأقسام
+    showAllBtn.onclick = function () {
+      displayAllSections();
+    };
+
+    // هنا زر قسم البرمجة
+    programmingBtn.onclick = function () {
+      displayOneSection("البرمجة");
+    };
+
+    // هنا زر قسم الروايات
+    novelsBtn.onclick = function () {
+      displayOneSection("الروايات");
+    };
+
+    // هنا زر قسم تطوير الذات
+    selfDevBtn.onclick = function () {
+      displayOneSection("تطوير الذات");
+    };
+
+    // هنا أول ما الصفحة تفتح نعرض كل الأقسام
+    displayAllSections();
+  </script>
+</body>
+</html>

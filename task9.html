@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Product List Page</title>
+
+  <style>
+    /* تنسيق عام */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* شكل الصفحة */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f3f4f6;
+      padding: 20px;
+      color: #111827;
+    }
+
+    /* الصندوق الرئيسي */
+    .container {
+      width: 100%;
+      max-width: 900px;
+      margin: auto;
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    }
+
+    /* عنوان الصفحة */
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #1f2937;
+    }
+
+    /* مكان عرض المنتجات */
+    #productsContainer {
+      display: grid;
+      gap: 15px;
+    }
+
+    /* كارت المنتج */
+    .product-card {
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 16px;
+      background-color: #f9fafb;
+    }
+
+    /* عنوان المنتج */
+    .product-title {
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #2563eb;
+    }
+
+    /* بيانات المنتج */
+    .product-info {
+      margin-bottom: 8px;
+      line-height: 1.7;
+    }
+
+    /* مكان الأزرار */
+    .buttons-box {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    /* شكل الأزرار */
+    button {
+      border: none;
+      padding: 10px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      color: white;
+      font-size: 15px;
+    }
+
+    /* زر التعديل */
+    .edit-btn {
+      background-color: #f59e0b;
+    }
+
+    /* زر الحذف */
+    .delete-btn {
+      background-color: #dc2626;
+    }
+
+    /* رسالة لو مفيش منتجات */
+    .empty-message {
+      text-align: center;
+      font-size: 20px;
+      color: #6b7280;
+      padding: 20px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>قائمة المنتجات</h1>
+
+    <!-- المكان اللي المنتجات هتظهر جواه -->
+    <div id="productsContainer"></div>
+  </div>
+
+  <script>
+    // هنا عملنا array فيها المنتجات
+    // كل منتج عبارة عن object فيه name و price و description
+    let products = [
+      {
+        name: "Laptop",
+        price: 25000,
+        description: "لابتوب مناسب للشغل والدراسة"
+      },
+      {
+        name: "Mouse",
+        price: 350,
+        description: "ماوس لاسلكي مريح في الاستخدام"
+      },
+      {
+        name: "Keyboard",
+        price: 800,
+        description: "كيبورد ميكانيكال بإضاءة"
+      }
+    ];
+
+    // هنا جبنا المكان اللي هنظهر فيه المنتجات
+    let productsContainer = document.getElementById("productsContainer");
+
+    // function مسؤولة عن عرض كل المنتجات
+    function showProducts() {
+      // هنا بنفضي المكان الأول
+      // عشان كل مرة نعرض المنتجات من جديد بشكل صحيح
+      productsContainer.innerHTML = "";
+
+      // هنا بنتأكد هل فيه منتجات ولا لا
+      if (products.length === 0) {
+        // هنا بنعمل عنصر جديد لو القائمة فاضية
+        let emptyMessage = document.createElement("p");
+
+        // هنا بنديله class
+        emptyMessage.classList.add("empty-message");
+
+        // هنا بنكتب الرسالة
+        emptyMessage.textContent = "لا توجد منتجات حاليًا";
+
+        // هنا بنضيف الرسالة داخل الصفحة
+        productsContainer.appendChild(emptyMessage);
+
+        // هنا بنوقف الـ function
+        return;
+      }
+
+      // هنا بنلف على كل المنتجات
+      for (let i = 0; i < products.length; i++) {
+        // هنا بنعمل كارت لكل منتج
+        let productCard = document.createElement("div");
+
+        // هنا بندي للكارت class
+        productCard.classList.add("product-card");
+
+        // هنا بنعمل عنوان المنتج
+        let productTitle = document.createElement("h2");
+
+        // هنا بندي العنوان class
+        productTitle.classList.add("product-title");
+
+        // هنا بنحط اسم المنتج
+        productTitle.textContent = products[i].name;
+
+        // هنا بنعمل فقرة للسعر
+        let productPrice = document.createElement("p");
+
+        // هنا بنديها class
+        productPrice.classList.add("product-info");
+
+        // هنا بنحط السعر
+        productPrice.textContent = "السعر: " + products[i].price + " جنيه";
+
+        // هنا بنعمل فقرة للوصف
+        let productDescription = document.createElement("p");
+
+        // هنا بنديها class
+        productDescription.classList.add("product-info");
+
+        // هنا بنحط الوصف
+        productDescription.textContent = "الوصف: " + products[i].description;
+
+        // هنا بنعمل صندوق للأزرار
+        let buttonsBox = document.createElement("div");
+
+        // هنا بندي للصندوق class
+        buttonsBox.classList.add("buttons-box");
+
+        // هنا بنعمل زر التعديل
+        let editButton = document.createElement("button");
+
+        // هنا بندي الزر class
+        editButton.classList.add("edit-btn");
+
+        // هنا بنكتب نص الزر
+        editButton.textContent = "تعديل";
+
+        // هنا بنحط attribute فيه index المنتج
+        editButton.setAttribute("data-index", i);
+
+        // هنا بنضيف event للزر
+        // استخدمنا function العادية مش arrow function
+        // عشان this تشير على الزرار نفسه
+        editButton.addEventListener("click", function () {
+          // هنا جبنا رقم المنتج من الزر نفسه باستخدام this
+          let currentIndex = this.getAttribute("data-index");
+
+          // هنا بنطلب من المستخدم الاسم الجديد
+          let newName = prompt("اكتب اسم المنتج الجديد", products[currentIndex].name);
+
+          // هنا لو المستخدم ضغط cancel نوقف
+          if (newName === null) {
+            return;
+          }
+
+          // هنا بنطلب السعر الجديد
+          let newPrice = prompt("اكتب السعر الجديد", products[currentIndex].price);
+
+          // هنا لو المستخدم ضغط cancel نوقف
+          if (newPrice === null) {
+            return;
+          }
+
+          // هنا بنطلب الوصف الجديد
+          let newDescription = prompt("اكتب الوصف الجديد", products[currentIndex].description);
+
+          // هنا لو المستخدم ضغط cancel نوقف
+          if (newDescription === null) {
+            return;
+          }
+
+          // هنا بنتأكد إن البيانات صحيحة
+          if (newName === "" || newDescription === "" || isNaN(newPrice) || Number(newPrice) <= 0) {
+            alert("من فضلك اكتب بيانات صحيحة");
+            return;
+          }
+
+          // هنا بنعدل بيانات المنتج داخل الـ array
+          products[currentIndex].name = newName;
+          products[currentIndex].price = Number(newPrice);
+          products[currentIndex].description = newDescription;
+
+          // هنا بنعرض المنتجات من جديد بعد التعديل
+          showProducts();
+        });
+
+        // هنا بنعمل زر الحذف
+        let deleteButton = document.createElement("button");
+
+        // هنا بندي الزر class
+        deleteButton.classList.add("delete-btn");
+
+        // هنا بنكتب نص الزر
+        deleteButton.textContent = "حذف";
+
+        // هنا بنحط عليه index المنتج
+        deleteButton.setAttribute("data-index", i);
+
+        // هنا بنضيف event للزر
+        // وبرضه استخدمنا function العادية عشان this تشتغل صح
+        deleteButton.addEventListener("click", function () {
+          // هنا جبنا رقم المنتج من الزر نفسه
+          let currentIndex = this.getAttribute("data-index");
+
+          // هنا بنحذف المنتج من الـ array
+          products.splice(currentIndex, 1);
+
+          // هنا بنعرض المنتجات من جديد بعد الحذف
+          showProducts();
+        });
+
+        // هنا بنضيف الأزرار داخل صندوق الأزرار
+        buttonsBox.appendChild(editButton);
+        buttonsBox.appendChild(deleteButton);
+
+        // هنا بنضيف عناصر المنتج داخل الكارت
+        productCard.appendChild(productTitle);
+        productCard.appendChild(productPrice);
+        productCard.appendChild(productDescription);
+        productCard.appendChild(buttonsBox);
+
+        // هنا بنضيف الكارت داخل الصفحة
+        productsContainer.appendChild(productCard);
+      }
+    }
+
+    // هنا أول ما الصفحة تفتح نعرض المنتجات
+    showProducts();
+  </script>
+</body>
+</html>
