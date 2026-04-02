@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Color Preference App</title>
+
+  <style>
+    /* نلغي المسافات الافتراضية من الصفحة */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* نحدد لون افتراضي للخلفية من خلال متغير CSS */
+    :root {
+      --default-bg: #f4f4f4;
+    }
+
+    /* تنسيق جسم الصفحة */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: var(--default-bg);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: background-color 0.3s ease;
+    }
+
+    /* الصندوق الرئيسي */
+    .container {
+      background-color: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      width: 350px;
+    }
+
+    /* عنوان التطبيق */
+    h1 {
+      margin-bottom: 20px;
+      font-size: 24px;
+      color: #333;
+    }
+
+    /* النص التوضيحي */
+    p {
+      margin-bottom: 20px;
+      color: #666;
+      font-size: 15px;
+    }
+
+    /* حاوية الألوان */
+    .colors {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    /* شكل كل دائرة لون */
+    .color-box {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 3px solid transparent;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    /* تأثير عند المرور على اللون */
+    .color-box:hover {
+      transform: scale(1.1);
+    }
+
+    /* اللون المختار */
+    .color-box.active {
+      border-color: #222;
+      transform: scale(1.1);
+    }
+
+    /* زرار الريسيت */
+    button {
+      padding: 10px 18px;
+      border: none;
+      border-radius: 8px;
+      background-color: #222;
+      color: white;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    /* تأثير عند المرور على الزرار */
+    button:hover {
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- الصندوق الرئيسي للتطبيق -->
+  <div class="container">
+    <!-- عنوان -->
+    <h1>Color Preference App</h1>
+
+    <!-- وصف بسيط -->
+    <p>Choose your favorite background color</p>
+
+    <!-- الألوان المتاحة -->
+    <div class="colors">
+      <!-- كل عنصر لون عليه data-color عشان نقرأ اللون منه -->
+      <span class="color-box" data-color="#f4f4f4" style="background-color: #f4f4f4;"></span>
+      <span class="color-box" data-color="#ffcccc" style="background-color: #ffcccc;"></span>
+      <span class="color-box" data-color="#cce5ff" style="background-color: #cce5ff;"></span>
+      <span class="color-box" data-color="#d4edda" style="background-color: #d4edda;"></span>
+      <span class="color-box" data-color="#fff3cd" style="background-color: #fff3cd;"></span>
+    </div>
+
+    <!-- زرار لإرجاع اللون الافتراضي -->
+    <button id="resetBtn">Reset to Default</button>
+  </div>
+
+  <script>
+    // نحدد اللون الافتراضي
+    const defaultColor = "#f4f4f4";
+
+    // نمسك كل عناصر الألوان
+    const colorBoxes = document.querySelectorAll(".color-box");
+
+    // نمسك زرار الريسيت
+    const resetBtn = document.getElementById("resetBtn");
+
+    // دالة لتطبيق اللون على خلفية الصفحة
+    function applyColor(color) {
+      document.body.style.backgroundColor = color;
+    }
+
+    // دالة لإزالة active من كل الألوان
+    function removeActiveClass() {
+      colorBoxes.forEach(function(box) {
+        box.classList.remove("active");
+      });
+    }
+
+    // دالة لتفعيل active على اللون المختار
+    function setActiveColor(selectedColor) {
+      colorBoxes.forEach(function(box) {
+        if (box.dataset.color === selectedColor) {
+          box.classList.add("active");
+        }
+      });
+    }
+
+    // لما الصفحة تفتح، نشوف هل فيه لون محفوظ في localStorage ولا لا
+    const savedColor = localStorage.getItem("bgColor");
+
+    // لو فيه لون محفوظ
+    if (savedColor) {
+      applyColor(savedColor);
+      setActiveColor(savedColor);
+    } else {
+      // لو مفيش لون محفوظ نطبق الافتراضي
+      applyColor(defaultColor);
+      setActiveColor(defaultColor);
+    }
+
+    // نضيف event على كل لون
+    colorBoxes.forEach(function(box) {
+      box.addEventListener("click", function() {
+        // نجيب اللون من data-color
+        const selectedColor = box.dataset.color;
+
+        // نطبق اللون على الصفحة
+        applyColor(selectedColor);
+
+        // نحفظ اللون في localStorage
+        localStorage.setItem("bgColor", selectedColor);
+
+        // نشيل active من كل الألوان
+        removeActiveClass();
+
+        // نضيف active على اللون اللي اتضغط عليه
+        box.classList.add("active");
+      });
+    });
+
+    // لما المستخدم يضغط على زرار Reset
+    resetBtn.addEventListener("click", function() {
+      // نرجع الخلفية للون الافتراضي
+      applyColor(defaultColor);
+
+      // نمسح اللون المحفوظ من localStorage
+      localStorage.removeItem("bgColor");
+
+      // نشيل active من كل العناصر
+      removeActiveClass();
+
+      // نخلي اللون الافتراضي هو الـ active
+      setActiveColor(defaultColor);
+    });
+  </script>
+
+</body>
+</html>
