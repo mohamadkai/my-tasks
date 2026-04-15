@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Profile Viewer</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .card {
+      width: 400px;
+      background: #1e293b;
+      padding: 25px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .card h1 {
+      margin-top: 0;
+      margin-bottom: 20px;
+      font-size: 28px;
+      color: #38bdf8;
+    }
+
+    .info {
+      margin-bottom: 12px;
+      font-size: 18px;
+    }
+
+    .label {
+      color: #94a3b8;
+      font-weight: bold;
+    }
+
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border: none;
+      border-radius: 10px;
+      background: #38bdf8;
+      color: #0f172a;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #0ea5e9;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h1>User Profile</h1>
+    <div id="profile"></div>
+    <button id="updateBtn">Update Job</button>
+  </div>
+
+  <script>
+    // Object فيه بيانات المستخدم
+    const user = {
+      name: "Mohamed",
+      age: 23,
+      job: "Frontend Developer",
+      address: "Cairo, Egypt"
+    };
+
+    //  نمسك مكان عرض البيانات
+    const profileDiv = document.getElementById("profile");
+
+    // Function مسؤولة عن عرض البيانات على الصفحة
+    function renderProfile() {
+      // Destructuring للبيانات من الـ object
+      const { name, age, job, address } = user;
+
+      // عرض البيانات داخل الصفحة
+      profileDiv.innerHTML = `
+        <div class="info"><span class="label">Name:</span> ${name}</div>
+        <div class="info"><span class="label">Age:</span> ${age}</div>
+        <div class="info"><span class="label">Job:</span> ${job}</div>
+        <div class="info"><span class="label">Address:</span> ${address}</div>
+      `;
+    }
+
+    //  عرض البيانات أول ما الصفحة تفتح
+    renderProfile();
+
+    //  لما أضغط على الزرار يغير الوظيفة
+    const updateBtn = document.getElementById("updateBtn");
+
+    updateBtn.addEventListener("click", function () {
+      user.job = "Senior Frontend Developer";
+      renderProfile();
+    });
+  </script>
+
+</body>
+</html>

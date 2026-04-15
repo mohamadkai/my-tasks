@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Form Validation Tool</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #f4f4f4;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 420px;
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .field {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      outline: none;
+      transition: 0.3s;
+    }
+
+    input.success {
+      border-color: #28a745;
+    }
+
+    input.error {
+      border-color: #dc3545;
+    }
+
+    .message {
+      font-size: 14px;
+      margin-top: 6px;
+      min-height: 18px;
+    }
+
+    .message.success {
+      color: #28a745;
+    }
+
+    .message.error {
+      color: #dc3545;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      background: #007bff;
+      color: white;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    .result {
+      margin-top: 15px;
+      text-align: center;
+      font-weight: bold;
+      min-height: 22px;
+    }
+
+    .result.success {
+      color: #28a745;
+    }
+
+    .result.error {
+      color: #dc3545;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Form Validation Tool</h2>
+
+    <form id="validationForm">
+      <div class="field">
+        <label for="name">Name</label>
+        <input type="text" id="name" placeholder="Enter your name" />
+        <div class="message" id="nameMessage"></div>
+      </div>
+
+      <div class="field">
+        <label for="email">Email</label>
+        <input type="text" id="email" placeholder="Enter your email" />
+        <div class="message" id="emailMessage"></div>
+      </div>
+
+      <div class="field">
+        <label for="phone">Phone</label>
+        <input type="text" id="phone" placeholder="Enter 10-digit phone" />
+        <div class="message" id="phoneMessage"></div>
+      </div>
+
+      <button type="submit">Submit</button>
+    </form>
+
+    <div class="result" id="resultMessage"></div>
+  </div>
+
+  <script>
+    // 1) مسك العناصر من الـ HTML
+    const form = document.getElementById("validationForm");
+
+    const nameInput = document.getElementById("name");
+    const emailInput = document.getElementById("email");
+    const phoneInput = document.getElementById("phone");
+
+    const nameMessage = document.getElementById("nameMessage");
+    const emailMessage = document.getElementById("emailMessage");
+    const phoneMessage = document.getElementById("phoneMessage");
+
+    const resultMessage = document.getElementById("resultMessage");
+
+    // 2) الـ Regex Patterns
+    // الاسم: من 3 إلى 10 حروف إنجليزي فقط وبدون أي رموز أو أرقام
+    const nameRegex = /^[A-Za-z]{3,10}$/;
+
+    // الإيميل: شكل إيميل معتاد
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    // الموبايل: 10 أرقام بالظبط
+    const phoneRegex = /^\d{11}$/;
+
+    // 3) دالة عامة لعرض حالة الحقل
+    function setStatus(input, messageElement, messageText, status) {
+      input.classList.remove("success", "error");
+      messageElement.classList.remove("success", "error");
+
+      input.classList.add(status);
+      messageElement.classList.add(status);
+      messageElement.textContent = messageText;
+    }
+
+    // 4) دوال التحقق لكل حقل
+    function validateName() {
+      const value = nameInput.value.trim();
+
+      if (nameRegex.test(value)) {
+        setStatus(nameInput, nameMessage, "Valid name", "success");
+        return true;
+      } else {
+        setStatus(
+          nameInput,
+          nameMessage,
+          "Name must be 3 to 10 letters only",
+          "error"
+        );
+        return false;
+      }
+    }
+
+    function validateEmail() {
+      const value = emailInput.value.trim();
+
+      if (emailRegex.test(value)) {
+        setStatus(emailInput, emailMessage, "Valid email", "success");
+        return true;
+      } else {
+        setStatus(
+          emailInput,
+          emailMessage,
+          "Please enter a valid email address",
+          "error"
+        );
+        return false;
+      }
+    }
+
+    function validatePhone() {
+      const value = phoneInput.value.trim();
+
+      if (phoneRegex.test(value)) {
+        setStatus(phoneInput, phoneMessage, "Valid phone number", "success");
+        return true;
+      } else {
+        setStatus(
+          phoneInput,
+          phoneMessage,
+          "Phone must be exactly 10 digits",
+          "error"
+        );
+        return false;
+      }
+    }
+
+    // 5) تحقق مباشر أثناء الكتابة
+    nameInput.addEventListener("input", validateName);
+    emailInput.addEventListener("input", validateEmail);
+    phoneInput.addEventListener("input", validatePhone);
+
+    // 6) عند إرسال الفورم
+    form.addEventListener("submit", function (e) {
+      e.preventDefault(); // يمنع إرسال الفورم مؤقتًا
+
+      const isNameValid = validateName();
+      const isEmailValid = validateEmail();
+      const isPhoneValid = validatePhone();
+
+      if (isNameValid && isEmailValid && isPhoneValid) {
+        resultMessage.textContent = "Form submitted successfully";
+        resultMessage.className = "result success";
+      } else {
+        resultMessage.textContent = "Form has errors";
+        resultMessage.className = "result error";
+      }
+    });
+  </script>
+</body>
+</html>

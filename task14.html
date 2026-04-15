@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Product Tracker</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      width: 500px;
+      background: #1e293b;
+      padding: 25px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    h1 {
+      margin-top: 0;
+      color: #38bdf8;
+      text-align: center;
+    }
+
+    .inputs {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    input {
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    button {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 15px;
+    }
+
+    .add-btn {
+      background: #22c55e;
+      color: white;
+    }
+
+    .remove-btn {
+      background: #ef4444;
+      color: white;
+    }
+
+    .check-btn {
+      background: #f59e0b;
+      color: white;
+    }
+
+    .message {
+      margin: 15px 0;
+      font-weight: bold;
+      color: #cbd5e1;
+      min-height: 24px;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    li {
+      background: #334155;
+      margin-bottom: 10px;
+      padding: 12px;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .total {
+      margin-top: 20px;
+      font-size: 20px;
+      font-weight: bold;
+      color: #38bdf8;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Product Tracker</h1>
+
+    <div class="inputs">
+      <input type="text" id="productName" placeholder="Enter product name" />
+      <input type="number" id="productPrice" placeholder="Enter product price" />
+    </div>
+
+    <div class="buttons">
+      <button class="add-btn" id="addBtn">Add Product</button>
+      <button class="remove-btn" id="removeBtn">Remove Product</button>
+      <button class="check-btn" id="checkBtn">Check Product</button>
+    </div>
+
+    <div class="message" id="message"></div>
+
+    <ul id="productList"></ul>
+
+    <div class="total" id="totalCost">Total: 0 EGP</div>
+  </div>
+
+  <script>
+    // Set لتخزين أسماء المنتجات بدون تكرار
+    const productSet = new Set();
+
+    // Map لتخزين اسم المنتج مع سعره
+    const productMap = new Map();
+
+    // عناصر الصفحة
+    const productNameInput = document.getElementById("productName");
+    const productPriceInput = document.getElementById("productPrice");
+    const addBtn = document.getElementById("addBtn");
+    const removeBtn = document.getElementById("removeBtn");
+    const checkBtn = document.getElementById("checkBtn");
+    const productList = document.getElementById("productList");
+    const totalCost = document.getElementById("totalCost");
+    const message = document.getElementById("message");
+
+    // فنكشن لعرض المنتجات وتحديث الإجمالي
+    function renderProducts() {
+      productList.innerHTML = "";
+
+      let total = 0;
+
+      for (const productName of productSet) {
+        const price = productMap.get(productName);
+
+        const li = document.createElement("li");
+        li.innerHTML = `
+          <span>${productName}</span>
+          <span>${price} EGP</span>
+        `;
+
+        productList.appendChild(li);
+        total += price;
+      }
+
+      totalCost.textContent = `Total: ${total} EGP`;
+    }
+
+    // إضافة منتج
+    addBtn.addEventListener("click", function () {
+      const name = productNameInput.value.trim();
+      const price = Number(productPriceInput.value);
+
+      if (name === "" || price <= 0) {
+        message.textContent = "Please enter a valid product name and price.";
+        return;
+      }
+
+      if (productSet.has(name)) {
+        message.textContent = "This product already exists.";
+        return;
+      }
+
+      productSet.add(name);
+      productMap.set(name, price);
+
+      message.textContent = `${name} added successfully.`;
+
+      renderProducts();
+
+      productNameInput.value = "";
+      productPriceInput.value = "";
+    });
+
+    // حذف منتج
+    removeBtn.addEventListener("click", function () {
+      const name = productNameInput.value.trim();
+
+      if (name === "") {
+        message.textContent = "Please enter a product name to remove.";
+        return;
+      }
+
+      if (!productSet.has(name)) {
+        message.textContent = "This product does not exist.";
+        return;
+      }
+
+      productSet.delete(name);
+      productMap.delete(name);
+
+      message.textContent = `${name} removed successfully.`;
+
+      renderProducts();
+
+      productNameInput.value = "";
+      productPriceInput.value = "";
+    });
+
+    // التحقق من وجود منتج
+    checkBtn.addEventListener("click", function () {
+      const name = productNameInput.value.trim();
+
+      if (name === "") {
+        message.textContent = "Please enter a product name to check.";
+        return;
+      }
+
+      if (productSet.has(name)) {
+        const price = productMap.get(name);
+        message.textContent = `${name} exists and its price is ${price} EGP.`;
+      } else {
+        message.textContent = `${name} is not found.`;
+      }
+    });
+  </script>
+</body>
+</html>
